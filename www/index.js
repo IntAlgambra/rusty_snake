@@ -2,22 +2,24 @@ import {Game} from "wasm";
 import {memory} from "wasm/snakewasm_bg";
 import { game_apple_y } from "wasm/snakewasm_bg.wasm";
 
-// snake speed in cells/sec
-const SNAKE_SPEED = 5;
+//colors and stuff
 const FIELD_COLOR = "#e6e6ff";
 const SNAKE_COLOR = "#1e1e3c";
-const APPLE_COLOR = "#a92c22"
+const APPLE_COLOR = "#a92c22";
+
+// snake speed in cells/sec
+const SNAKE_SPEED = 5;
 // time to render moving to one cell
 const TIME_TO_RENDER = 1000/SNAKE_SPEED;
-let stuff = 0;
 
-
+// some globals (it's bad practise, though)
 const game = Game.new(16, 16);
 const canvas = document.querySelector("#game");
 const ctx = canvas.getContext("2d");
-const score = document.querySelector("#score")
+const score = document.querySelector("#score");
+const actionAudio = document.querySelector("actionSound");
 
-
+// Let's add some event listeners to control snake via arrow keys
 document.addEventListener("keydown", (event) => {
     if (event.key == "ArrowDown") {
         game.turn_snake_up();
@@ -31,6 +33,7 @@ document.addEventListener("keydown", (event) => {
 })
 
 
+// Function render apple on canvas
 const renderApple = (ctx) => {
     const apple_x = game.apple_x()*10;
     const apple_y = game.apple_y()*10;
@@ -38,9 +41,10 @@ const renderApple = (ctx) => {
     ctx.fillRect(apple_x, apple_y, 10, 10);
 }
 
+// Function renders snake at the end of every animation
+// Without animation we need only fire this functhion
+// every game cycle
 const renderGameCycle = (ctx) => {
-    console.log(`render cycle ${stuff}`)
-    stuff += 1;
     ctx.fillStyle = FIELD_COLOR;
     ctx.fillRect(0, 0, 320, 320);
     ctx.fillStyle = SNAKE_COLOR;
@@ -58,6 +62,9 @@ const renderGameCycle = (ctx) => {
     } )
 }
 
+
+// Function rendering shake head smooth animathion from one
+// game state to another 
 const renderHeadAnimation = (
     ctx,
     headX,
@@ -80,6 +87,7 @@ const renderHeadAnimation = (
     }
 }
 
+// Function renders snake tail animathion from one game state to another
 const renderTailAnimation = (
     ctx,
     tailX,
@@ -103,6 +111,7 @@ const renderTailAnimation = (
 
 }
 
+// main function, launching game cycle
 const run = (ctx) => {
     renderGameCycle(ctx);
     let tailX = game.tail_x();

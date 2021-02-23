@@ -9,6 +9,11 @@ use js_sys::Math;
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
+#[wasm_bindgen(module = "/helpers.js")]
+extern "C" {
+    fn log_stuff(s: &str);
+}
+
 pub struct Apple {
     x: u32,
     y: u32
@@ -152,6 +157,7 @@ impl Game {
         let apple_x = (Math::random() * self.width as f64).floor() as u32;
         let apple_y = (Math::random() * self.height as f64).floor() as u32;
         if grow {
+            log_stuff("super cool");
             self.score += 1;
             self.apple = Apple::new(apple_x, apple_y);
         }

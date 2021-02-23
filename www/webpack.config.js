@@ -12,7 +12,7 @@ module.exports = {
     clientLogLevel: 'silent',
     stats: 'minimal',
     historyApiFallback: true,
-    host: '0.0.0.0',
+    host: 'localhost',
     disableHostCheck: true,
     watchOptions: {
       poll: true // Or you can set a value in milliseconds.
