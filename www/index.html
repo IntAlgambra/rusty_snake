@@ -3,13 +3,15 @@
   <head>
     <meta charset="utf-8">
     <title>RUSTY SNAKE</title>
-    
+    <link href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" rel="stylesheet" />
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
       body {
         font-family: 'Press Start 2P', cursive;
-        color: #e6e6ff ;
         padding: 0;
+        margin: 0;
+      }
+      p {
         margin: 0;
       }
       #container {
@@ -18,17 +20,33 @@
         align-items: center;
         justify-content: center;
         min-height: 100vh;
-        background-color: #1e1e3c;
+        position: relative;
+      }
+      #controls {
+        display: flex;
+        align-items: center;
+      }
+      #playBtn {
+        margin-right: 25px;
+      }
+      #game {
+        margin-bottom: 25px;
       }
     </style>
   </head>
   <body>
     <div id="container">
-      <h1>RUSTY SNAKE</h1>
-      <canvas id="game" width="160" height="160"></canvas>
-      <p id="score">SCORE:</p>
+      <div class="nes-container with-title">
+        <p class="title">Rusty snake</p>
+        <canvas id="game"></canvas>
+        <div id=controls>
+          <button type="button" class="nes-btn" id="playBtn">Play!</button>
+          <p id="score">SCORE: 0</p>
+        </div>
+      </div>
     </div>
     <audio id="actionSound" src="./sounds/action.wav"></audio>
+    <audio id="gameoverSound" src="./sounds/gameover.wav"></audio>
     <script src="./bootstrap.js"></script>
   </body>
 </html>

@@ -11,7 +11,8 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen(module = "/helpers.js")]
 extern "C" {
-    fn log_stuff(s: &str);
+    fn play_eating_sound();
+    fn play_gameover_sound();
 }
 
 pub struct Apple {
@@ -148,6 +149,7 @@ impl Game {
         }
         if self.check_collision() {
             self.stopped = true;
+            play_gameover_sound();
             return ();
         }
         let (head_x, head_y) = self.snake.head_pos();
@@ -157,7 +159,7 @@ impl Game {
         let apple_x = (Math::random() * self.width as f64).floor() as u32;
         let apple_y = (Math::random() * self.height as f64).floor() as u32;
         if grow {
-            log_stuff("super cool");
+            play_eating_sound();
             self.score += 1;
             self.apple = Apple::new(apple_x, apple_y);
         }

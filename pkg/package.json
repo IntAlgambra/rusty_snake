@@ -1,0 +1,15 @@
+{
+  "name": "snakewasm",
+  "collaborators": [
+    "intalgambra <bass.valle@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "snakewasm_bg.wasm",
+    "snakewasm.js",
+    "snakewasm.d.ts"
+  ],
+  "module": "snakewasm.js",
+  "types": "snakewasm.d.ts",
+  "sideEffects": false
+}

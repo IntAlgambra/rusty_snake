@@ -1,11 +1,16 @@
 import {Game} from "wasm";
 import {memory} from "wasm/snakewasm_bg";
-import { game_apple_y } from "wasm/snakewasm_bg.wasm";
 
 //colors and stuff
-const FIELD_COLOR = "#e6e6ff";
-const SNAKE_COLOR = "#1e1e3c";
-const APPLE_COLOR = "#a92c22";
+const FIELD_COLOR = "#212529";
+const SNAKE_COLOR = "#ff7777";
+const APPLE_COLOR = "#ff7777";
+// game field dimensions (in cells)
+const GAME_FIELD_WIDTH = 24;
+const GAME_FIELD_HEIGHT = 16;
+
+// cell size in pixels
+const CELL_SIZE = 20;
 
 // snake speed in cells/sec
 const SNAKE_SPEED = 5;
@@ -13,11 +18,16 @@ const SNAKE_SPEED = 5;
 const TIME_TO_RENDER = 1000/SNAKE_SPEED;
 
 // some globals (it's bad practise, though)
-const game = Game.new(16, 16);
 const canvas = document.querySelector("#game");
+canvas.width = GAME_FIELD_WIDTH * CELL_SIZE;
+canvas.height = GAME_FIELD_HEIGHT * CELL_SIZE;
 const ctx = canvas.getContext("2d");
+ctx.fillStyle = FIELD_COLOR;
+ctx.fillRect(0, 0, GAME_FIELD_WIDTH*CELL_SIZE, GAME_FIELD_HEIGHT*CELL_SIZE);
 const score = document.querySelector("#score");
-const actionAudio = document.querySelector("actionSound");
+const playBtn = document.querySelector("#playBtn")
+
+
 
 // Let's add some event listeners to control snake via arrow keys
 document.addEventListener("keydown", (event) => {
@@ -35,10 +45,10 @@ document.addEventListener("keydown", (event) => {
 
 // Function render apple on canvas
 const renderApple = (ctx) => {
-    const apple_x = game.apple_x()*10;
-    const apple_y = game.apple_y()*10;
+    const apple_x = game.apple_x()*CELL_SIZE;
+    const apple_y = game.apple_y()*CELL_SIZE;
     ctx.fillStyle = APPLE_COLOR;
-    ctx.fillRect(apple_x, apple_y, 10, 10);
+    ctx.fillRect(apple_x, apple_y, CELL_SIZE, CELL_SIZE);
 }
 
 // Function renders snake at the end of every animation
@@ -46,7 +56,7 @@ const renderApple = (ctx) => {
 // every game cycle
 const renderGameCycle = (ctx) => {
     ctx.fillStyle = FIELD_COLOR;
-    ctx.fillRect(0, 0, 320, 320);
+    ctx.fillRect(0, 0, GAME_FIELD_WIDTH*CELL_SIZE, GAME_FIELD_HEIGHT*CELL_SIZE);
     ctx.fillStyle = SNAKE_COLOR;
     const pointer = game.pointer_to_snake();
     const dataLen = game.snake_data_len();
@@ -58,7 +68,7 @@ const renderGameCycle = (ctx) => {
         return acc;
     }, [])
     snake.forEach((cell) => {
-        ctx.fillRect(cell[0]*10, cell[1]*10, 10, 10);
+        ctx.fillRect(cell[0]*CELL_SIZE, cell[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE);
     } )
 }
 
@@ -72,18 +82,18 @@ const renderHeadAnimation = (
     direction,
     progress
 ) => {
-    const x = headX * 10;
-    const y = headY * 10;
-    const step = Math.floor(progress * 10);
+    const x = headX * CELL_SIZE;
+    const y = headY * CELL_SIZE;
+    const step = Math.floor(progress * CELL_SIZE);
     ctx.fillStyle = SNAKE_COLOR;
     if (direction === 2) {
-        ctx.fillRect(x, y-step, 10, step);
+        ctx.fillRect(x, y-step, CELL_SIZE, step);
     } else if (direction === 1) {
-        ctx.fillRect(x+10, y, step, 10);
+        ctx.fillRect(x+CELL_SIZE, y, step, CELL_SIZE);
     } else if (direction === 0) {
-        ctx.fillRect(x, y+10, 10, step);
+        ctx.fillRect(x, y+CELL_SIZE, CELL_SIZE, step);
     } else if (direction === 3) {
-        ctx.fillRect(x-step, y, step, 10);
+        ctx.fillRect(x-step, y, step, CELL_SIZE);
     }
 }
 
@@ -95,24 +105,25 @@ const renderTailAnimation = (
     direction,
     progress
 ) => {
-    const x = tailX * 10;
-    const y = tailY * 10;
-    const step = Math.floor(progress * 10);
+    const x = tailX * CELL_SIZE;
+    const y = tailY * CELL_SIZE;
+    const step = Math.floor(progress * CELL_SIZE);
     ctx.fillStyle = FIELD_COLOR;
     if (direction === 2) {
-        ctx.fillRect(x, y+10-step, 10, step);
+        ctx.fillRect(x, y+CELL_SIZE-step, CELL_SIZE, step);
     } else if (direction === 1) {
-        ctx.fillRect(x, y, step, 10);
+        ctx.fillRect(x, y, step, CELL_SIZE);
     } else if (direction === 0) {
-        ctx.fillRect(x, y, 10, step);
+        ctx.fillRect(x, y, CELL_SIZE, step);
     } else if (direction === 3) {
-        ctx.fillRect(x+10-step, y, step, 10);
+        ctx.fillRect(x+CELL_SIZE-step, y, step, CELL_SIZE);
     }
 
 }
 
 // main function, launching game cycle
 const run = (ctx) => {
+    game = Game.new(GAME_FIELD_WIDTH, GAME_FIELD_HEIGHT)
     renderGameCycle(ctx);
     let tailX = game.tail_x();
     let tailY = game.tail_y();
@@ -136,6 +147,7 @@ const run = (ctx) => {
             game.tick();
             renderApple(ctx);
             if (game.is_stopped()) {
+                playBtn.classList.toggle("inactiveBtn")
                 return;
             }
             time = current;
@@ -160,13 +172,10 @@ const run = (ctx) => {
     })
 }
 
-run(ctx);
-
-// function main() {
-//     renderGameCycle(ctx);
-// };
-
-// main();
+playBtn.addEventListener("click", () => {
+    run(ctx)
+    playBtn.classList.toggle("inactiveBtn")
+})
 
 
 
